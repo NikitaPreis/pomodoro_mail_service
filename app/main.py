@@ -4,12 +4,12 @@ from fastapi import FastAPI
 import uvicorn
 
 from app.settings import Settings
-from app.utils import make_amqp_consumer
+from app.utils import consume_message
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await make_amqp_consumer()
+    await consume_message()
     yield
 
 

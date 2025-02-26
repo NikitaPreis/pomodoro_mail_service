@@ -1,13 +1,20 @@
+import asyncio
+import json
+
 import aio_pika
+from aiokafka import AIOKafkaConsumer
 
 from app.client import MailClient
 from app.settings import Settings
 from app.service import MailService
 
 
-async def get_amqp_connection() -> aio_pika.abc.AbstractConnection:
-    settings = Settings()
-    return await aio_pika.connect_robust(settings.AMQP_URL)
+consumer: AIOKafkaConsumer = AIOKafkaConsumer(
+    'email_topic',
+    bootstrap_servers='localhost:9092',
+    value_deserializer=lambda message: json.loads(message.decode('utf-8')),
+    # loop=asyncio.get_event_loop()
+)
 
 
 async def get_mail_service() -> MailService:
@@ -16,9 +23,12 @@ async def get_mail_service() -> MailService:
     )
 
 
-async def make_amqp_consumer():
+async def consume_message():
     mail_service = await get_mail_service()
-    connection = await get_amqp_connection()
-    channel = await connection.channel()
-    queue = await channel.declare_queue('mail_queue', durable=True)
-    await queue.consume(mail_service.consume_mail)
+    await consumer.start()
+    try:
+        async for message in consumer:
+            print(message)
+            await mail_service.consume_mail(message.value)
+    finally:
+        await consumer.stop()
