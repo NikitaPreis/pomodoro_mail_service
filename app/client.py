@@ -1,10 +1,7 @@
 from dataclasses import dataclass
-import os
-import time
 import ssl
 import smtplib
 from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 
 from app.settings import Settings
 
