@@ -3,7 +3,6 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 import uvicorn
 
-from app.settings import Settings
 from app.utils import make_amqp_consumer
 
 
