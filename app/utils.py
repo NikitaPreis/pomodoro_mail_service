@@ -7,7 +7,7 @@ from app.service import MailService
 
 async def get_amqp_connection() -> aio_pika.abc.AbstractConnection:
     settings = Settings()
-    return await aio_pika.connect_robust(settings.AMQP_URL)
+    return await aio_pika.connect_robust(settings.amqp_url)
 
 
 async def get_mail_service() -> MailService:

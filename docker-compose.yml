@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8002:8002"
+    networks:
+      - pomodoro-tracker_pomodoro-net
+
+networks:
+  pomodoro-tracker_pomodoro-net:
+    external: true
